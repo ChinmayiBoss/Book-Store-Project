@@ -4,28 +4,32 @@ on:
   push:
     branches:
       - main  
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Step 2: Log in to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
 
+      # Step 3: Build Docker image (use correct build context)
       - name: Build Docker image
-        run: docker build -t chinuboss/bookstore-backend:latest .
+        run: docker build -t chinuboss/bookstore-backend:latest ./backend
 
-      # Push Docker image to Docker Hub
+      # Step 4: Push Docker image to Docker Hub
       - name: Push Docker image
         run: docker push chinuboss/bookstore-backend:latest
 
-      # SSH to your server and deploy
+      # Step 5: SSH to your server and deploy
       - name: Deploy to server
         uses: appleboy/ssh-action@v0.1.7
         with:

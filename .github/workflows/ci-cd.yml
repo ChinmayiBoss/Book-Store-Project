@@ -21,7 +21,7 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
 
-      # Step 3: Build Docker image (use correct build context)
+      # Step 3: Build Docker image
       - name: Build Docker image
         run: docker build -t chinuboss/bookstore-backend:latest ./backend
 
@@ -29,7 +29,7 @@ jobs:
       - name: Push Docker image
         run: docker push chinuboss/bookstore-backend:latest
 
-      # Step 5: SSH to your server and deploy
+      # Step 5: SSH to your EC2 server and deploy
       - name: Deploy to server
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -37,9 +37,11 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-           docker stop bookstore-backend || true
-           docker rm bookstore-backend || true
-           docker run -d -p 5555:5555 --name bookstore-backend \
-           -e MONGODB_URI="mongodb://book1:book123@localhost:27017/book" \
-           chinuboss/bookstore-backend:latest
+            # Stop & remove old container if exists
+            docker stop bookstore-backend || true
+            docker rm bookstore-backend || true
 
+            # Run the new container with MongoDB URI from GitHub Secrets
+            docker run -d -p 5555:5555 --name bookstore-backend \
+              -e MONGODB_URI="${{ secrets.SERVER_MONGODB_URI }}" \
+              chinuboss/bookstore-backend:latest

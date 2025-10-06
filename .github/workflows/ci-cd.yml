@@ -37,10 +37,9 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            docker pull chinuboss/bookstore-backend:latest
-            docker stop bookstore-backend || true
-            docker rm bookstore-backend || true
-            docker run -d -p 5555:5555 --name bookstore-backend \
-            -e MONGODB_URI="${{ secrets.MONGODB_URI }}" \
-            chinuboss/bookstore-backend:latest
+           docker stop bookstore-backend || true
+           docker rm bookstore-backend || true
+           docker run -d -p 5555:5555 --name bookstore-backend \
+           -e MONGODB_URI="mongodb://book1:book123@localhost:27017/book" \
+           chinuboss/bookstore-backend:latest
 

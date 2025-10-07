@@ -43,5 +43,6 @@ jobs:
 
             # Run the new container with MongoDB URI from GitHub Secrets
             docker run -d -p 5555:5555 --name bookstore-backend \
-              -e MONGODB_URI="${{ secrets.SERVER_MONGODB_URI }}" \
-              chinuboss/bookstore-backend:latest
+            -e MONGODB_URI="${{ secrets.SERVER_MONGODB_URI }}" \
+            chinuboss/bookstore-backend:latest
+
